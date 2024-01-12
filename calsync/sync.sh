@@ -1,6 +1,6 @@
 #download calenders and rename entries according to TOP and Platform
-mkdir dicercalsync > dev/null
-cd dicercalsync > dev/null
+mkdir dicercalsync > /dev/null
+cd dicercalsync > /dev/null
 
 wget -q https://www.airbnb.com/calendar/ical/581131839376406371.ics?s=ae58f0bea61a69dd68c5dada91df4a28 -O airbnb2.ics
 sed 's/SUMMARY:Airbnb (Not available)/SUMMARY:Top 2 Airbnb.com/g' airbnb2.ics > top2a.ics
