@@ -49,9 +49,6 @@ END:VEVENT
 END:VCALENDAR
 EOF
 
-echo "END:VCALENDAR" >> $file
-
-
 # combine all calendar files
 
 file=new.ics
