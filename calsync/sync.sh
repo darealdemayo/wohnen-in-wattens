@@ -2,7 +2,7 @@
 #get github api token
 
 # Check if the file exists
-if [ -f "$file_path" ]; then
+if [ -f "apitoken.conf" ]; then
     # Read the file content into the variable
     apitoken=$(cat "apitoken.conf")
     echo "API Token has been read from the file."
