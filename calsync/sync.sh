@@ -1,4 +1,17 @@
 #download calenders and rename entries according to TOP and Platform
+#get github api token
+
+# Check if the file exists
+if [ -f "$file_path" ]; then
+    # Read the file content into the variable
+    apitoken=$(cat "apitoken.conf")
+    echo "API Token has been read from the file."
+else
+    echo "Error: File does not exist."
+fi
+
+
+
 mkdir dicercalsync > /dev/null
 cd dicercalsync > /dev/null
 
@@ -23,9 +36,26 @@ sed 's/SUMMARY:[^\n]*/SUMMARY:Top3 TVB Hall/g' tourismus3.ics > top3t.ics
 wget -q https://ical.deskline.net/HAL/services/2582f0c5-948f-4f83-a679-4ee7ccfeaef9/de85228e-88ee-4066-854c-4a419d0a9634.ics -O tourismus5.ics
 sed 's/SUMMARY:[^\n]*/SUMMARY:Top5 TVB Hall/g' tourismus5.ics > top5t.ics
 
+# Create a new .ics file
+cat <<EOF > lastsync.ics
+BEGIN:VCALENDAR
+VERSION:2.0
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:$current_date
+DTEND;VALUE=DATE:$current_date
+UID:lastsync0
+SUMMARY:Last Sync
+END:VEVENT
+END:VCALENDAR
+EOF
+
+echo "END:VCALENDAR" >> $file
+
+
 # combine all calendar files
 
 file=new.ics
+
 
 echo "BEGIN:VCALENDAR" > $file
 echo "CALSCALE:GREGORIAN" >> $file
@@ -34,7 +64,6 @@ echo "METHOD:PUBLISH" >> $file
 
 cat top*.ics | grep -v -e VCALENDAR -e VERSION -e PRODID -e CALSCALE -e METHOD -e DTSTAMP -e DESCRIPTION -e STATUS >> $file
 
-echo "END:VCALENDAR" >> $file
 
 #push ics to purelymail caldav
 
@@ -45,14 +74,14 @@ else
 	mv -f $file combined.ics
 	curl -L \
 	  -H "Accept: application/vnd.github+json" \
-	  -H "Authorization: Bearer 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" \
+	  -H "Authorization: Bearer $apitoken" \
 	  -H "X-GitHub-Api-Version: 2022-11-28" \
 	  https://api.github.com/repos/darealdemayo/wohnen-in-wattens/contents/calsync/combined.ics | grep sha | sed 's/sha//g' | sed 's/[^a-zA-Z0-9]//g' > shablob
 	  
 	curl -L \
 	  -X PUT \
 	  -H "Accept: application/vnd.github+json" \
-	  -H "Authorization: Bearer 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" \
+	  -H "Authorization: Bearer $apitoken" \
 	  -H "X-GitHub-Api-Version: 2022-11-28" \
 	  https://api.github.com/repos/darealdemayo/wohnen-in-wattens/contents/calsync/combined.ics \
 	  -d '{"message":"CalSyncMerge AutoUpdate","committer":{"name":"DicerAutoupdater","email":"hausverwaltung@wohnen-in-wattens.at"},"content":"'$(base64 -w 0 combined.ics)'","sha":"'$(cat shablob)'"}'
