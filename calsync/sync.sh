@@ -37,17 +37,7 @@ wget -q https://ical.deskline.net/HAL/services/2582f0c5-948f-4f83-a679-4ee7ccfea
 sed 's/SUMMARY:[^\n]*/SUMMARY:Top5 TVB Hall/g' tourismus5.ics > top5t.ics
 
 # Create a new .ics file
-cat <<EOF > lastsync.ics
-BEGIN:VCALENDAR
-VERSION:2.0
-BEGIN:VEVENT
-DTSTART;VALUE=DATE:$current_date
-DTEND;VALUE=DATE:$current_date
-UID:lastsync0
-SUMMARY:Last Sync
-END:VEVENT
-END:VCALENDAR
-EOF
+
 
 # combine all calendar files
 
@@ -61,6 +51,17 @@ echo "METHOD:PUBLISH" >> $file
 
 cat top*.ics | grep -v -e VCALENDAR -e VERSION -e PRODID -e CALSCALE -e METHOD -e DTSTAMP -e DESCRIPTION -e STATUS >> $file
 
+# add calender end and add last sync entry
+
+cat <<EOF >> $file
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:$current_date
+DTEND;VALUE=DATE:$current_date
+UID:lastsync0
+SUMMARY:Last Sync
+END:VEVENT
+END:VCALENDAR
+EOF
 
 #push ics to purelymail caldav
 
