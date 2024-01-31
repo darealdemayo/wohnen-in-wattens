@@ -7,7 +7,7 @@ if [ -f "$file_path" ]; then
     apitoken=$(cat "apitoken.conf")
     echo "API Token has been read from the file."
 else
-    echo "Error: File does not exist."
+    echo "Error: apitoken.conf does not exist."
 fi
 
 
