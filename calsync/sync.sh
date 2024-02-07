@@ -52,6 +52,7 @@ echo "METHOD:PUBLISH" >> $file
 cat top*.ics | grep -v -e VCALENDAR -e VERSION -e PRODID -e CALSCALE -e METHOD -e DTSTAMP -e DESCRIPTION -e STATUS >> $file
 
 # add calender end and add last sync entry
+current_date=$(date -d "yesterday" +%Y%m%d)
 
 cat <<EOF >> $file
 BEGIN:VEVENT
@@ -63,7 +64,6 @@ END:VEVENT
 END:VCALENDAR
 EOF
 
-#push ics to purelymail caldav
 
 if diff "$file" "combined.ics" > /dev/null; then
 	echo "no change"
